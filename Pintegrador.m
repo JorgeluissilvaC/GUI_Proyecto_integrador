@@ -112,6 +112,9 @@ num=strcat(char(vpa(poly2sym(Gm2.num{1,1},s),3)));
 bar=strcat('-------------------------');
 deno=strcat(char(vpa(poly2sym(Gm2.den{1,1},s),3)));
 TF2={num;bar;deno}; %función de transferencia(String)
+norm=Gm2.den{1,1}./Gm2.den{1,1}(1);
+cita=norm(2)/(2*norm(3));
+own=sqrt(norm(3));
 
 
 
