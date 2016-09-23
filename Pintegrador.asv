@@ -92,8 +92,7 @@ function pushbutton1_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-global ncont nact npl nsn A B C D TF TF2 A1 B1 C1 D1 Gm Gm2; 
-% Gm -> Función Original ; Gm2 -> Función Aproximada
+global ncont nact npl nsn A B C D TF TF2 A1 B1 C1 D1; 
 tft=((ncont*nact)*npl)/(1+((ncont*nact)*npl)*nsn);
 Gm=tft;
 [b,a]=tfdata(Gm,'v');
@@ -104,13 +103,12 @@ bar=strcat('-------------------------');
 deno=strcat(char(vpa(poly2sym(Gm.den{1,1},s),3)));
 TF={num;bar;deno}; %función de transferencia(String)
 set(handles.tfs,'String',TF);
-
-Gm2=balred(tft,2); % Función Aproximada de Segundo orden
-[b1,a1]=tfdata(Gm2,'v');
+Gm=balred(tft,2); % Función Aproximada de Segundo orden
+[b1,a1]=tfdata(Gm,'v');
 [A1,B1,C1,D1]=tf2ss(b1,a1);
-num=strcat(char(vpa(poly2sym(Gm2.num{1,1},s),3))); 
+num=strcat(char(vpa(poly2sym(Gm.num{1,1},s),3))); 
 bar=strcat('-------------------------');
-deno=strcat(char(vpa(poly2sym(Gm2.den{1,1},s),3)));
+deno=strcat(char(vpa(poly2sym(Gm.den{1,1},s),3)));
 TF2={num;bar;deno}; %función de transferencia(String)
 
 
@@ -497,58 +495,26 @@ global ncont nact npl nsn A B C D TF TF2 A1 B1 C1 D1;
 
 %if hObject == handles.TF
 
-if hObject == handles.A
-    select = get(handles.TF,'Value');
-    if select == 1
-        set(handles.tfs,'String',num2str(A));
+    if hObject == handles.A
+       select = get(handles.TF,'Value');
+       if select == 1
+        set(handles.tfs,'String',num2str(A));    
+       end 
+       select = get(handles.TF,'Value');
+       if select == 1
+        set(handles.tfs,'String',num2str(A));    
+       end 
+    elseif hObject == handles.B
+    set(handles.tfs,'String',num2str(B));
+    elseif hObject == handles.C
+    set(handles.tfs,'String',num2str(C));
+    elseif hObject == handles.D
+    set(handles.tfs,'String',num2str(D));
+% elseif hObject == handles.TF
+%     set(handles.tfs,'String',TF);
+% elseif hObject == handles.TF2
+%     set(handles.tfs,'String',TF2);
     end
-    select = get(handles.TF2,'Value');
-    if select == 1
-        set(handles.tfs,'String',num2str(A1));
-    end
-elseif hObject == handles.B
-    
-    select = get(handles.TF,'Value');
-    if select == 1
-        set(handles.tfs,'String',num2str(B));
-    end
-    select = get(handles.TF2,'Value');
-    if select == 1
-        set(handles.tfs,'String',num2str(B1));
-    end
-    
-elseif hObject == handles.C
-    
-    select = get(handles.TF,'Value');
-    if select == 1
-        set(handles.tfs,'String',num2str(C));
-    end
-    select = get(handles.TF2,'Value');
-    if select == 1
-        set(handles.tfs,'String',num2str(C1));
-    end
-
-elseif hObject == handles.D
-    
-    select = get(handles.TF,'Value');
-    if select == 1
-        set(handles.tfs,'String',num2str(D));
-    end
-    select = get(handles.TF2,'Value');
-    if select == 1
-        set(handles.tfs,'String',num2str(D1));
-    end
-elseif hObject == handles.ft
-    
-    select = get(handles.TF,'Value');
-    if select == 1
-        set(handles.tfs,'String',TF);
-    end
-    select = get(handles.TF2,'Value');
-    if select == 1
-        set(handles.tfs,'String',TF2);
-    end
-end
 %end
 
 
