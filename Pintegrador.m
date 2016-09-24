@@ -22,7 +22,7 @@ function varargout = Pintegrador(varargin)
 
 % Edit the above text to modify the response to help Pintegrador
 
-% Last Modified by GUIDE v2.5 24-Sep-2016 10:01:50
+% Last Modified by GUIDE v2.5 24-Sep-2016 17:56:22
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -128,7 +128,46 @@ TF2={num;bar;deno}; %función de transferencia(String)
 norm=Gm2.den{1,1}./Gm2.den{1,1}(1);
 cita=norm(2)/(2*norm(3));
 own=sqrt(norm(3));
+%Calculo de error
+syms s
+syms x
+% en laplace
+escalon=1/s;
+rampa=1/s^2;
+parabola=1/s^3;
+impulso=1;
+%en el tiempo
+escalonx=1;
+rampax=x;
+parabolax=x^2/2;
+impulsox=dirac(x);
+[num,den]=tfdata(Gm2,'v');
+nume=poly2sym(num,s);
+deno=poly2sym(den,s);
+c_t=ilaplace((nume/deno)*escalon,s,x);
+e_escalon=abs(limit(escalonx-c_t,x,inf));
+c_t=ilaplace((nume/deno)*rampa,s,x);
+e_rampa=abs(limit(rampax-c_t,x,inf));
+c_t=ilaplace((nume/deno)*parabola,s,x);
+e_parabola=abs(limit(parabolax-c_t,x,inf));
+c_t=ilaplace((nume/deno)*impulso,s,x);
+e_impulso=abs(limit(impulsox-c_t,x,inf));
 %disp(Gm);disp(Gm2)
+bb=stepinfo(Gm2);
+a=strcat('tr=',num2str(bb.RiseTime));
+b=strcat('tp=',num2str(bb.PeakTime));
+c=strcat('ts=',num2str(bb.SettlingTime));
+d=strcat('Mp%=',num2str(bb.Overshoot));
+e=strcat('K=',(get(handles.edit1,'String')));
+f=strcat('Er step=',num2str(sym2poly(e_escalon)));
+g=strcat('Er ramp=',num2str(sym2poly(e_rampa)));
+h=strcat('Er par=',num2str(sym2poly(e_parabola)));
+i=strcat('Er imp=',num2str(sym2poly(e_impulso)));
+%f=strcat('error=');
+xl = {a;b;c;d;e;f;g;h;i};
+set(handles.params,'string',xl)
+%set(handles.actuador,'String',s);
+
 
 function edit1_Callback(hObject, eventdata, handles)
 % hObject    handle to edit1 (see GCBO)
@@ -955,3 +994,28 @@ function h_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes during object creation, after setting all properties.
+function params_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to params (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+
+% --- Executes on button press in B.
+function B_Callback(hObject, eventdata, handles)
+% hObject    handle to B (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of B
+
+
+% --- Executes on button press in pushbutton4.
+function pushbutton4_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+saveas(handles.axes6,'Sistema.png')
+
