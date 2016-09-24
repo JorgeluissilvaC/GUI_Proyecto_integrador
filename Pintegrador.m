@@ -66,6 +66,9 @@ set(handles.edit5,'String',get_param('diagb/planta','numerator'));
 
 set(handles.edit10,'String',get_param('diagb/Sensor','denominator'));
 set(handles.edit9,'String',get_param('diagb/Sensor','numerator'));
+evalin('base','clear all')
+global cont
+cont=0;
 % Choose default command line output for Pintegrador
 handles.output = hObject;
 
@@ -94,19 +97,11 @@ function pushbutton1_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 global ncont nact npl nsn A B C D TF TF2 A1 B1 C1 D1 Gm Gm2 
-        SaveFC1{1,1,1} = [];SaveFC2{1,1,1} = [];
-        SaveFC3{1,1,1} = [];SaveFC4{1,1,1} = [];
-        SaveFC5{1,1,1} = [];SaveFC6{1,1,1} = [];
-        SaveFC7{1,1,1} = [];SaveFC8{1,1,1} = [];
-        save('Esc_real','SaveFC1');save('Esc_aprox','SaveFC2');
-        save('par_real','SaveFC3');save('par_aprox','SaveFC4');
-        save('ram_real','SaveFC5');save('ram_aprox','SaveFC6');
-        save('imp_real','SaveFC7');save('imp_aprox','SaveFC8');
 % Gm -> Función Original ; Gm2 -> Función Aproximada
 %----------------------------------------------------------
 a='Escalón';
-b='Parabola';
-c='Rampa';
+c='Parabola';
+b='Rampa';
 d='Impulso';
 xo = {a;b;c;d};
 set(handles.popupmenu1,'string',xo)
@@ -616,83 +611,271 @@ function pushbutton3_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton3 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-global Gm Gm2
+global Gm Gm2 numH denH num den cont
 Plo = get(handles.popupmenu1,'value');
-time =str2num(get(handles.time,'String'));
-h =str2num(get(handles.h,'String'));
+time =str2double(get(handles.time,'String'));
+h =str2double(get(handles.h,'String'));
 Res = get(handles.radiobutton9, 'Value');   %Superponer
-cont=str2num(get(handles.time,'String'));   %Contador 
+
 t=0:h:time;
 u_t=0.*(t<0)+1.*(t>=0);     %Escalon
-r_t=t.^2/2;                 %Parabola
-R_t=t;                      %Rampa
-p_t=1.*(t==0);              %Impulso
-switch Res
-    case 0           %No superponer
-        set(handles.cont,'String','[2 2 2 2]')
-        clear SaveFC8 SaveFC7 SaveFC6 SaveFC5 SaveFC4 SaveFC3 SaveFC1 SaveFC2
-        switch Plo
-            case 1   %Escañón
-                cla(handles.axes6);cla(handles.axes10)
-                hold(handles.axes6,'on');hold(handles.axes10,'on')
-                %Sistema Real
-                [s,t]=lsim(Gm,u_t,t);
-                plot(t,s,'parent',handles.axes6);hold on
-                plot(t,u_t,'k','parent',handles.axes6);
-                %Sistema aproximado
-                [s,t]=lsim(Gm2,u_t,t);
-                plot(t,s,'parent',handles.axes10);hold on
-                plot(t,u_t,'k','parent',handles.axes10);               
-                
-            case 2   %Parabola
-                cla(handles.axes6);cla(handles.axes10)
-                hold(handles.axes6,'on');hold(handles.axes10,'on')
-                %Sistema Real
-                [s,t]=lsim(Gm,r_t,t);
-                plot(t,s,'parent',handles.axes6);hold on
-                plot(t,r_t,'k','parent',handles.axes6);
-                %Sistema aproximado
-                [s,t]=lsim(Gm2,r_t,t);
-                plot(t,s,'parent',handles.axes10);hold on
-                plot(t,r_t,'k','parent',handles.axes10);                
-                
-            case 3   %Rampa
-                cla(handles.axes6);cla(handles.axes10)
-                hold(handles.axes6,'on');hold(handles.axes10,'on')
-                %Sistema Real
-                [s,t]=lsim(Gm,R_t,t);
-                plot(t,s,'parent',handles.axes6);hold on
-                plot(t,R_t,'k','parent',handles.axes6);
-                %Sistema aproximado
-                [s,t]=lsim(Gm2,R_t,t);
-                plot(t,s,'parent',handles.axes10);hold on
-                plot(t,R_t,'k','parent',handles.axes10);                
-                
-            case 4   %Impulso
-                cla(handles.axes6);cla(handles.axes10)
-                hold(handles.axes6,'on');hold(handles.axes10,'on')
-                %Sistema Real
-                [s,t]=lsim(Gm,p_t,t);
-                plot(t,s,'parent',handles.axes6);hold on
-                plot(t,p_t,'k','parent',handles.axes6);
-                %Sistema aproximado
-                [s,t]=lsim(Gm2,p_t,t);
-                plot(t,s,'parent',handles.axes10);hold on
-                plot(t,p_t,'k','parent',handles.axes10);
-                
+p_t=t.^2/2;                 %Parabola
+r_t=t;                      %Rampa
+%i_t=1.*(t==0);              %Impulso
+switch Plo
+    case 1
+        if(Res)
+            cont=cont+1;
+            assignin('base','cont',cont);
+            [num,den]=tfdata(Gm);
+            assignin('base','num',num);
+            assignin('base','den',den);
+            numH{cont}=num;
+            denH{cont}=den;
+            assignin('base','numH',numH);
+            assignin('base','denH',denH);
+            
+            cla(handles.axes6)
+            for i=1:1:length(numH)
+            [s,t]=lsim(tf(numH{i},denH{i}),u_t,t);   
+            hold(handles.axes6,'on')
+            plot(t,s,'parent',handles.axes6);
+            plot(t,u_t,'k','parent',handles.axes6);
+            end
+        else
+            evalin('base','clearvars -except cont')
+            clear global numH;
+            clear global denH;
+            cont=0;
+            assignin('base','cont',cont);
+            [s,t]=lsim(Gm,u_t,t);
+            cla(handles.axes6);
+            hold(handles.axes6,'on')
+            plot(t,s,'parent',handles.axes6);
+            plot(t,u_t,'k','parent',handles.axes6);
         end
-    case 1           %superponer
-        cont =str2num(get(handles.cont,'String'));
-        
-        switch Plo
-            case 1   %Escañón 
-              
-            case 2   %Parabola
-               
-            case 3   %Rampa
-               
-            case 4   %Impulso  
-               
+    case 2
+        if (Res)
+            
+            cont=cont+1;
+            assignin('base','cont',cont);
+            [num,den]=tfdata(Gm);
+            assignin('base','num',num);
+            assignin('base','den',den);
+            numH{cont}=num;
+            denH{cont}=den;
+            assignin('base','numH',numH);
+            assignin('base','denH',denH);
+            cla(handles.axes6)
+            for i=1:1:length(numH)
+            [d,t]=lsim(tf(numH{i},denH{i}),r_t,t);
+            hold(handles.axes6,'on')
+            plot(t,d,'parent',handles.axes6);
+            plot(t,r_t,'k','parent',handles.axes6);
+            end
+        else
+            evalin('base','clearvars -except cont')
+            clear global numH;
+            clear global denH;
+            cont=0;
+            assignin('base','cont',cont);
+            cla(handles.axes6);
+            [d,t]=lsim(Gm,r_t,t);
+            hold(handles.axes6,'on')
+            plot(t,d,'parent',handles.axes6);
+            plot(t,r_t,'k','parent',handles.axes6);
+        end
+    case 3
+        if (Res)
+            
+            cont=cont+1;
+            assignin('base','cont',cont);
+            [num,den]=tfdata(Gm);
+            assignin('base','num',num);
+            assignin('base','den',den);
+            numH{cont}=num;
+            denH{cont}=den;
+            assignin('base','numH',numH);
+            assignin('base','denH',denH);
+            cla(handles.axes6)
+            for i=1:1:length(numH)
+            [d,t]=lsim(tf(numH{i},denH{i}),p_t,t);
+            hold(handles.axes6,'on')
+            plot(t,d,'parent',handles.axes6);
+            plot(t,p_t,'k','parent',handles.axes6);
+            end
+        else
+            evalin('base','clearvars -except cont')
+            clear global numH;
+            clear global denH;
+            cont=0;
+            assignin('base','cont',cont);
+            cla(handles.axes6);
+            [d,t]=lsim(Gm,p_t,t);
+            hold(handles.axes6,'on')
+            plot(t,d,'parent',handles.axes6);
+            plot(t,p_t,'k','parent',handles.axes6);
+        end
+    case 4
+        if (Res)
+            
+            cont=cont+1;
+            assignin('base','cont',cont);
+            [num,den]=tfdata(Gm);
+            assignin('base','num',num);
+            assignin('base','den',den);
+            numH{cont}=num;
+            denH{cont}=den;
+            assignin('base','numH',numH);
+            assignin('base','denH',denH);
+            cla(handles.axes6)
+            for i=1:1:length(numH)
+            [d,ti]=impulse(tf(numH{i},denH{i}),time);
+            i_t=0.*(ti~=0)+1.*(ti==0);
+            hold(handles.axes6,'on')
+            plot(ti,d,'parent',handles.axes6);
+            plot(ti,i_t,'k','parent',handles.axes6);
+            end
+        else
+            evalin('base','clearvars -except cont')
+            clear global numH;
+            clear global denH;
+            cont=0;
+            assignin('base','cont',cont);
+            cla(handles.axes6);
+            [d,ti]=impulse(Gm,time);
+            i_t=0.*(ti~=0)+1.*(ti==0);
+            hold(handles.axes6,'on')
+            plot(ti,d,'parent',handles.axes6);
+            plot(ti,i_t,'k','parent',handles.axes6);
+        end
+end
+switch Plo
+    case 1
+        if(Res)
+            cont=cont+1;
+            assignin('base','cont',cont);
+            [num,den]=tfdata(Gm2);
+            assignin('base','num',num);
+            assignin('base','den',den);
+            numH{cont}=num;
+            denH{cont}=den;
+            assignin('base','numH',numH);
+            assignin('base','denH',denH);
+            
+            cla(handles.axes10)
+            for i=1:1:length(numH)
+            [s,t]=lsim(tf(numH{i},denH{i}),u_t,t);   
+            hold(handles.axes10,'on')
+            plot(t,s,'parent',handles.axes10);
+            plot(t,u_t,'k','parent',handles.axes10);
+            end
+        else
+            evalin('base','clearvars -except cont')
+            clear global numH;
+            clear global denH;
+            cont=0;
+            assignin('base','cont',cont);
+            [s,t]=lsim(Gm2,u_t,t);
+            cla(handles.axes10);
+            hold(handles.axes10,'on')
+            plot(t,s,'parent',handles.axes10);
+            plot(t,u_t,'k','parent',handles.axes10);
+        end
+    case 2
+        if (Res)
+            
+            cont=cont+1;
+            assignin('base','cont',cont);
+            [num,den]=tfdata(Gm2);
+            assignin('base','num',num);
+            assignin('base','den',den);
+            numH{cont}=num;
+            denH{cont}=den;
+            assignin('base','numH',numH);
+            assignin('base','denH',denH);
+            cla(handles.axes10)
+            for i=1:1:length(numH)
+            [d,t]=lsim(tf(numH{i},denH{i}),r_t,t);
+            hold(handles.axes10,'on')
+            plot(t,d,'parent',handles.axes10);
+            plot(t,r_t,'k','parent',handles.axes10);
+            end
+        else
+            evalin('base','clearvars -except cont')
+            clear global numH;
+            clear global denH;
+            cont=0;
+            assignin('base','cont',cont);
+            cla(handles.axes10);
+            [d,t]=lsim(Gm2,r_t,t);
+            hold(handles.axes10,'on')
+            plot(t,d,'parent',handles.axes10);
+            plot(t,r_t,'k','parent',handles.axes10);
+        end
+    case 3
+        if (Res)
+            
+            cont=cont+1;
+            assignin('base','cont',cont);
+            [num,den]=tfdata(Gm2);
+            assignin('base','num',num);
+            assignin('base','den',den);
+            numH{cont}=num;
+            denH{cont}=den;
+            assignin('base','numH',numH);
+            assignin('base','denH',denH);
+            cla(handles.axes10)
+            for i=1:1:length(numH)
+            [d,t]=lsim(tf(numH{i},denH{i}),p_t,t);
+            hold(handles.axes10,'on')
+            plot(t,d,'parent',handles.axes10);
+            plot(t,p_t,'k','parent',handles.axes10);
+            end
+        else
+            evalin('base','clearvars -except cont')
+            clear global numH;
+            clear global denH;
+            cont=0;
+            assignin('base','cont',cont);
+            cla(handles.axes10);
+            [d,t]=lsim(Gm2,p_t,t);
+            hold(handles.axes10,'on')
+            plot(t,d,'parent',handles.axes10);
+            plot(t,p_t,'k','parent',handles.axes10);
+        end
+    case 4
+        if (Res)
+            
+            cont=cont+1;
+            assignin('base','cont',cont);
+            [num,den]=tfdata(Gm2);
+            assignin('base','num',num);
+            assignin('base','den',den);
+            numH{cont}=num;
+            denH{cont}=den;
+            assignin('base','numH',numH);
+            assignin('base','denH',denH);
+            cla(handles.axes10)
+            for i=1:1:length(numH)
+            [d,ti]=impulse(tf(numH{i},denH{i}),time);
+            i_t=0.*(ti~=0)+1.*(ti==0);
+            hold(handles.axes10,'on')
+            plot(ti,d,'parent',handles.axes10);
+            plot(ti,i_t,'k','parent',handles.axes10);
+            end
+        else
+            evalin('base','clearvars -except cont')
+            clear global numH;
+            clear global denH;
+            cont=0;
+            assignin('base','cont',cont);
+            cla(handles.axes10);
+            [d,ti]=impulse(Gm2,time);
+            i_t=0.*(ti~=0)+1.*(ti==0);
+            hold(handles.axes10,'on')
+            plot(ti,d,'parent',handles.axes10);
+            plot(ti,i_t,'k','parent',handles.axes10);
         end
 end
 
