@@ -98,10 +98,7 @@ global ncont nact npl nsn A B C D TF TF2 A1 B1 C1 D1 Gm Gm2
         SaveFC3{1,1,1} = [];SaveFC4{1,1,1} = [];
         SaveFC5{1,1,1} = [];SaveFC6{1,1,1} = [];
         SaveFC7{1,1,1} = [];SaveFC8{1,1,1} = [];
-        save('Esc_real','SaveFC1');save('Esc_aprox','SaveFC2');
-        save('par_real','SaveFC3');save('par_aprox','SaveFC4');
-        save('ram_real','SaveFC5');save('ram_aprox','SaveFC6');
-        save('imp_real','SaveFC7');save('imp_aprox','SaveFC8');
+        save(Esc_real,SaveFC1);save(Esta_aprox,SaveFC1);
 % Gm -> Función Original ; Gm2 -> Función Aproximada
 %----------------------------------------------------------
 a='Escalón';
@@ -616,12 +613,12 @@ function pushbutton3_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton3 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-global Gm Gm2
+global Gm Gm2 SaveFC8 SaveFC7 SaveFC6 SaveFC5 SaveFC4 SaveFC3 SaveFC1 SaveFC2
 Plo = get(handles.popupmenu1,'value');
 time =str2num(get(handles.time,'String'));
 h =str2num(get(handles.h,'String'));
 Res = get(handles.radiobutton9, 'Value');   %Superponer
-cont=str2num(get(handles.time,'String'));   %Contador 
+cont=str2num(get(handles.time,'String'));
 t=0:h:time;
 u_t=0.*(t<0)+1.*(t>=0);     %Escalon
 r_t=t.^2/2;                 %Parabola
@@ -683,16 +680,74 @@ switch Res
         end
     case 1           %superponer
         cont =str2num(get(handles.cont,'String'));
-        
         switch Plo
             case 1   %Escañón 
-              
+                SaveFC1{1,cont(1),1}=Gm;
+                SaveFC2{1,cont(1),1}=Gm2;
+                SaveFC1
+                SaveFC2
+                cont(1)=cont(1)+1;
+                
+                set(handles.cont,'String',num2str(cont))
+                hold(handles.axes6,'on');hold(handles.axes10,'on')
+%                 for jj=1:2:cont(1)
+%                     %Sistema Real
+%                     [s,t]=lsim(SaveFC1{1,jj,1},u_t,t);
+%                     plot(t,s,'parent',handles.axes6);hold on
+%                     plot(t,u_t,'k','parent',handles.axes6);
+%                     %Sistema aproximado
+%                     [s,t]=lsim(SaveFC2{1,jj,1},u_t,t);
+%                     plot(t,s,'parent',handles.axes10);hold on
+%                     plot(t,u_t,'k','parent',handles.axes10); 
+%                 end
             case 2   %Parabola
-               
+                SaveFC3{1,cont(2),1}=Gm;
+                SaveFC4{1,cont(2),1}=Gm2;
+                cont(2)=cont(2)+1;
+                set(handles.cont,'String',num2str(cont))
+                hold(handles.axes6,'on');hold(handles.axes10,'on')
+                for jj=1:2:cont(2)
+                    %Sistema Real
+                    [s,t]=lsim(SaveFC1{1,jj,1},r_t,t);
+                    plot(t,s,'parent',handles.axes6);hold on
+                    plot(t,r_t,'k','parent',handles.axes6);
+                    %Sistema aproximado
+                    [s,t]=lsim(SaveFC2{1,jj,1},r_t,t);
+                    plot(t,s,'parent',handles.axes10);hold on
+                    plot(t,r_t,'k','parent',handles.axes10); 
+                end
             case 3   %Rampa
-               
+                SaveFC5{1,cont(3),1}=Gm;
+                SaveFC6{1,cont(3),1}=Gm2;
+                cont(3)=cont(3)+1;
+                set(handles.cont,'String',num2str(cont))
+                hold(handles.axes6,'on');hold(handles.axes10,'on')
+                for jj=1:2:cont(3)
+                    %Sistema Real
+                    [s,t]=lsim(SaveFC1{1,jj,1},R_t,t);
+                    plot(t,s,'parent',handles.axes6);hold on
+                    plot(t,R_t,'k','parent',handles.axes6);
+                    %Sistema aproximado
+                    [s,t]=lsim(SaveFC2{1,jj,1},R_t,t);
+                    plot(t,s,'parent',handles.axes10);hold on
+                    plot(t,R_t,'k','parent',handles.axes10); 
+                end
             case 4   %Impulso  
-               
+                SaveFC7{1,cont(4),1}=Gm;
+                SaveFC8{1,cont(4),1}=Gm2;
+                cont(4)=cont(4)+1;
+                set(handles.cont,'String',num2str(cont))
+                hold(handles.axes6,'on');hold(handles.axes10,'on')
+                for jj=1:2:cont(4)
+                    %Sistema Real
+                    [s,t]=lsim(SaveFC1{1,jj,1},p_t,t);
+                    plot(t,s,'parent',handles.axes6);hold on
+                    plot(t,p_t,'k','parent',handles.axes6);
+                    %Sistema aproximado
+                    [s,t]=lsim(SaveFC2{1,jj,1},p_t,t);
+                    plot(t,s,'parent',handles.axes10);hold on
+                    plot(t,p_t,'k','parent',handles.axes10); 
+                end
         end
 end
 
