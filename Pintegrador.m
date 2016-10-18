@@ -22,7 +22,7 @@ function varargout = Pintegrador(varargin)
 
 % Edit the above text to modify the response to help Pintegrador
 
-% Last Modified by GUIDE v2.5 24-Sep-2016 17:56:22
+% Last Modified by GUIDE v2.5 17-Oct-2016 18:59:52
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -72,11 +72,167 @@ cont=0;
 % Choose default command line output for Pintegrador
 handles.output = hObject;
 
+% Set the colors indicating a selected/unselected tab
+handles.unselectedTabColor=get(handles.tab1text,'BackgroundColor');
+handles.selectedTabColor=handles.unselectedTabColor-0.1;
+
+% Set units to normalize for easier handling
+set(handles.tab1text,'Units','normalized')
+set(handles.tab2text,'Units','normalized')
+%set(handles.tab3text,'Units','normalized')
+set(handles.tab1Panel,'Units','normalized')
+set(handles.tab2Panel,'Units','normalized')
+%set(handles.tab3Panel,'Units','normalized')
+
+% Create tab labels (as many as you want according to following code template)
+
+% Tab 1
+pos1=get(handles.tab1text,'Position');
+handles.a1=axes('Units','normalized',...
+                'Box','on',...
+                'XTick',[],...
+                'YTick',[],...
+                'Color',handles.selectedTabColor,...
+                'Position',[pos1(1) pos1(2) pos1(3) pos1(4)+0.01],...
+                'ButtonDownFcn','Pintegrador(''a1bd'',gcbo,[],guidata(gcbo))');
+handles.t1=text('String','Tab 1',...
+                'Units','normalized',...
+                'Position',[(pos1(3)-pos1(1))/2,pos1(2)/2+pos1(4)],...
+                'HorizontalAlignment','left',...
+                'VerticalAlignment','middle',...
+                'Margin',0.001,...
+                'FontSize',8,...
+                'Backgroundcolor',handles.selectedTabColor,...
+                'ButtonDownFcn','Pintegrador(''t1bd'',gcbo,[],guidata(gcbo))');
+
+% Tab 2
+pos2=get(handles.tab2text,'Position');
+pos2(1)=pos1(1)+pos1(3);
+handles.a2=axes('Units','normalized',...
+                'Box','on',...
+                'XTick',[],...
+                'YTick',[],...
+                'Color',handles.unselectedTabColor,...
+                'Position',[pos2(1) pos2(2) pos2(3) pos2(4)+0.01],...
+                'ButtonDownFcn','Pintegrador(''a2bd'',gcbo,[],guidata(gcbo))');
+handles.t2=text('String','Tab 2',...
+                'Units','normalized',...
+                'Position',[pos2(3)/2,pos2(2)/2+pos2(4)],...
+                'HorizontalAlignment','left',...
+                'VerticalAlignment','middle',...
+                'Margin',0.001,...
+                'FontSize',8,...
+                'Backgroundcolor',handles.unselectedTabColor,...
+                'ButtonDownFcn','Pintegrador(''t2bd'',gcbo,[],guidata(gcbo))');
+% Tab 3 
+% pos3=get(handles.tab3text,'Position');
+% pos3(1)=pos2(1)+pos2(3);
+% handles.a3=axes('Units','normalized',...
+%                 'Box','on',...
+%                 'XTick',[],...
+%                 'YTick',[],...
+%                 'Color',handles.unselectedTabColor,...
+%                 'Position',[pos3(1) pos3(2) pos3(3) pos3(4)+0.01],...
+%                 'ButtonDownFcn','Pintegrador(''a3bd'',gcbo,[],guidata(gcbo))');
+% handles.t3=text('String','Tab 3',...
+%                 'Units','normalized',...
+%                 'Position',[pos3(3)/2,pos3(2)/2+pos3(4)],...
+%                 'HorizontalAlignment','left',...
+%                 'VerticalAlignment','middle',...
+%                 'Margin',0.001,...
+%                 'FontSize',8,...
+%                 'Backgroundcolor',handles.unselectedTabColor,...
+%                 'ButtonDownFcn','Pintegrador(''t3bd'',gcbo,[],guidata(gcbo))');
+            
+% Manage panels (place them in the correct position and manage visibilities)
+pan1pos=get(handles.tab1Panel,'Position');
+set(handles.tab2Panel,'Position',pan1pos)
+%set(handles.tab3Panel,'Position',pan1pos)
+set(handles.tab2Panel,'Visible','off')
+%set(handles.tab3Panel,'Visible','off')
+ 
 % Update handles structure
 guidata(hObject, handles);
 
 % UIWAIT makes Pintegrador wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
+function t1bd(hObject,eventdata,handles)
+
+set(hObject,'BackgroundColor',handles.selectedTabColor)
+set(handles.t2,'BackgroundColor',handles.unselectedTabColor)
+%set(handles.t3,'BackgroundColor',handles.unselectedTabColor)
+set(handles.a1,'Color',handles.selectedTabColor)
+set(handles.a2,'Color',handles.unselectedTabColor)
+%set(handles.a3,'Color',handles.unselectedTabColor)
+set(handles.tab1Panel,'Visible','on')
+set(handles.tab2Panel,'Visible','off')
+%set(handles.tab3Panel,'Visible','off')
+
+function t2bd(hObject,eventdata,handles)
+
+set(hObject,'BackgroundColor',handles.selectedTabColor)
+set(handles.t1,'BackgroundColor',handles.unselectedTabColor)
+%set(handles.t3,'BackgroundColor',handles.unselectedTabColor)
+set(handles.a2,'Color',handles.selectedTabColor)
+set(handles.a1,'Color',handles.unselectedTabColor)
+%set(handles.a3,'Color',handles.unselectedTabColor)
+set(handles.tab2Panel,'Visible','on')
+set(handles.tab1Panel,'Visible','off')
+%set(handles.tab3Panel,'Visible','off')
+
+% function t3bd(hObject,eventdata,handles)
+% 
+% set(hObject,'BackgroundColor',handles.selectedTabColor)
+% set(handles.t1,'BackgroundColor',handles.unselectedTabColor)
+% set(handles.t2,'BackgroundColor',handles.unselectedTabColor)
+% set(handles.a3,'Color',handles.selectedTabColor)
+% set(handles.a1,'Color',handles.unselectedTabColor)
+% set(handles.a2,'Color',handles.unselectedTabColor)
+% set(handles.tab3Panel,'Visible','on')
+% set(handles.tab1panel,'Visible','off')
+% set(handles.tab2panel,'Visible','off')
+
+% Axes object 1 callback (tab 1)
+function a1bd(hObject,eventdata,handles)
+
+set(hObject,'Color',handles.selectedTabColor)
+set(handles.a2,'Color',handles.unselectedTabColor)
+%set(handles.a3,'Color',handles.unselectedTabColor)
+set(handles.t1,'BackgroundColor',handles.selectedTabColor)
+set(handles.t2,'BackgroundColor',handles.unselectedTabColor)
+%set(handles.t3,'BackgroundColor',handles.unselectedTabColor)
+set(handles.tab1Panel,'Visible','on')
+set(handles.tab2Panel,'Visible','off')
+%set(handles.tab3Panel,'Visible','off')
+
+
+% Axes object 2 callback (tab 2)
+function a2bd(hObject,eventdata,handles)
+
+set(hObject,'Color',handles.selectedTabColor)
+set(handles.a1,'Color',handles.unselectedTabColor)
+%set(handles.a3,'Color',handles.unselectedTabColor)
+set(handles.t2,'BackgroundColor',handles.selectedTabColor)
+set(handles.t1,'BackgroundColor',handles.unselectedTabColor)
+%set(handles.t3,'BackgroundColor',handles.unselectedTabColor)
+set(handles.tab2Panel,'Visible','on')
+set(handles.tab1Panel,'Visible','off')
+%set(handles.tab3Panel,'Visible','off')
+
+
+% Axes object 3 callback (tab 3)
+% function a3bd(hObject,eventdata,handles)
+% 
+% set(hObject,'Color',handles.selectedTabColor)
+% set(handles.a1,'Color',handles.unselectedTabColor)
+% set(handles.a2,'Color',handles.unselectedTabColor)
+% set(handles.t3,'BackgroundColor',handles.selectedTabColor)
+% set(handles.t1,'BackgroundColor',handles.unselectedTabColor)
+% set(handles.t2,'BackgroundColor',handles.unselectedTabColor)
+% set(handles.tab3Panel,'Visible','on')
+% set(handles.tab1panel,'Visible','off')
+% set(handles.tab2panel,'Visible','off')
+
 
 
 % --- Outputs from this function are returned to the command line.
@@ -111,6 +267,8 @@ tft=((ncont*nact)*npl)/(1+((ncont*nact)*npl)*nsn);
 Gm=tft;
 [b,a]=tfdata(Gm,'v');
 [A,B,C,D]=tf2ss(b,a);
+disp(B) 
+disp(A)
 syms s
 num=strcat(char(vpa(poly2sym(Gm.num{1,1},s),3))); 
 bar=strcat('-------------------------');
@@ -550,15 +708,31 @@ global ncont nact npl nsn A B C D TF TF2 A1 B1 C1 D1;
 %if hObject == handles.TF
 
 if hObject == handles.A
+    disp(B)
     select = get(handles.TF,'Value');
     if select == 1
         set(handles.tfs,'String',num2str(A));
+        disp('hola soy jorge el mk')
     end
+    
     select = get(handles.TF2,'Value');
     if select == 1
         set(handles.tfs,'String',num2str(A1));
     end
-elseif hObject == handles.B
+    
+    
+elseif hObject == handles.C
+    disp(B)
+    select = get(handles.TF,'Value');
+    if select == 1
+        set(handles.tfs,'String',num2str(C));
+    end
+    select = get(handles.TF2,'Value');
+    if select == 1
+        set(handles.tfs,'String',num2str(C1));
+    end
+
+elseif hObject == handles.nb
     
     select = get(handles.TF,'Value');
     if select == 1
@@ -567,17 +741,6 @@ elseif hObject == handles.B
     select = get(handles.TF2,'Value');
     if select == 1
         set(handles.tfs,'String',num2str(B1));
-    end
-    
-elseif hObject == handles.C
-    
-    select = get(handles.TF,'Value');
-    if select == 1
-        set(handles.tfs,'String',num2str(C));
-    end
-    select = get(handles.TF2,'Value');
-    if select == 1
-        set(handles.tfs,'String',num2str(C1));
     end
 
 elseif hObject == handles.D
@@ -590,6 +753,7 @@ elseif hObject == handles.D
     if select == 1
         set(handles.tfs,'String',num2str(D1));
     end
+    
 elseif hObject == handles.ft
     
     select = get(handles.TF,'Value');
@@ -1003,13 +1167,13 @@ function params_CreateFcn(hObject, eventdata, handles)
 % handles    empty - handles not created until after all CreateFcns called
 
 
-% --- Executes on button press in B.
-function B_Callback(hObject, eventdata, handles)
-% hObject    handle to B (see GCBO)
+% --- Executes on button press in Bank.
+function Bank_Callback(hObject, eventdata, handles)
+% hObject    handle to Bank (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of B
+% Hint: get(hObject,'Value') returns toggle state of Bank
 
 
 % --- Executes on button press in pushbutton4.
@@ -1019,3 +1183,17 @@ function pushbutton4_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 saveas(handles.axes6,'Sistema.png')
 
+
+
+% --- Executes on button press in pushbutton5.
+function pushbutton5_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton5 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes during object creation, after setting all properties.
+function uipanel5_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to uipanel5 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
