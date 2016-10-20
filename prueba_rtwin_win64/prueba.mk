@@ -87,7 +87,7 @@ S_FUNCTIONS_LIB      :=
 SOLVER               := 
 NUMST                := 2
 TID01EQ              := 1
-NCSTATES             := 3
+NCSTATES             := 2
 BUILDARGS            :=  EXTMODE_STATIC_ALLOC=0 EXTMODE_STATIC_ALLOC_SIZE=1000000 TMW_EXTMODE_TESTING=0 OPTS="-DON_TARGET_WAIT_FOR_START=1"
 MULTITASKING         := 0
 EXT_MODE             := 1

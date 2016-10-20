@@ -3,9 +3,9 @@
  *
  * Code generation for model "prueba".
  *
- * Model version              : 1.6
+ * Model version              : 1.8
  * Simulink Coder version : 8.6 (R2014a) 27-Dec-2013
- * C source code generated on : Tue Oct 18 08:33:21 2016
+ * C source code generated on : Tue Oct 18 14:01:36 2016
  *
  * Target selection: rtwin.tlc
  * Note: GRT includes extra infrastructure and instrumentation for prototyping
@@ -139,7 +139,7 @@ static void rt_ertODEUpdateContinuousStates(RTWSolverInfo *si )
   real_T* f[prueba_NSTAGES];
   int idx,stagesIdx,statesIdx;
   double deltaX;
-  int_T nXc = 3;
+  int_T nXc = 2;
   rtsiSetSimTimeStep(si,MINOR_TIME_STEP);
   f[0] = intgData->f[0];
   f[1] = intgData->f[1];
@@ -200,11 +200,9 @@ static void rt_ertODEUpdateContinuousStates(RTWSolverInfo *si )
 void prueba_output(void)
 {
   /* local block i/o variables */
-  real_T rtb_Step;
   real_T rtb_Clock;
   real_T rtb_Impulse;
-  real_T rtb_Gain;
-  real_T Sum;
+  real_T tmp;
   if (rtmIsMajorTimeStep(prueba_M)) {
     /* set solver stop time */
     if (!(prueba_M->Timing.clockTick0+1)) {
@@ -223,15 +221,12 @@ void prueba_output(void)
     prueba_M->Timing.t[0] = rtsiGetT(&prueba_M->solverInfo);
   }
 
-  /* TransferFcn: '<Root>/Transfer Fcn' */
-  prueba_B.TransferFcn = 0.0;
-  prueba_B.TransferFcn += prueba_P.TransferFcn_C[0] *
-    prueba_X.TransferFcn_CSTATE[0];
-  prueba_B.TransferFcn += prueba_P.TransferFcn_C[1] *
-    prueba_X.TransferFcn_CSTATE[1];
+  /* TransferFcn: '<Root>/planta' */
+  prueba_B.planta = 0.0;
+  prueba_B.planta += prueba_P.planta_C * prueba_X.planta_CSTATE;
   if (rtmIsMajorTimeStep(prueba_M)) {
-    /* Constant: '<Root>/Constant' */
-    prueba_B.Constant = prueba_P.Constant_Value;
+    /* Constant: '<Root>/Consig' */
+    prueba_B.Consig = prueba_P.Consig_Value;
 
     /* DSP System Toolbox Discrete Impulse Generator (sdspimpgen2) - '<Root>/  Impulse' */
     if (prueba_DW.Impulse_COUNT > 0) {
@@ -246,72 +241,74 @@ void prueba_output(void)
       rtb_Impulse = (0.0);
     }
 
-    /* Gain: '<Root>/Gain' */
-    rtb_Gain = prueba_P.Gain_Gain * rtb_Impulse;
-  }
-
-  /* Sum: '<Root>/Sum' */
-  Sum = prueba_B.Constant - prueba_B.TransferFcn;
-
-  /* Clock: '<S1>/Clock' */
-  rtb_Step = prueba_M->Timing.t[0];
-
-  /* Step: '<S1>/Step' */
-  if (prueba_M->Timing.t[0] < prueba_P.Ramp_start) {
-    rtb_Clock = prueba_P.Step_Y0;
-  } else {
-    rtb_Clock = prueba_P.Ramp_slope;
-  }
-
-  /* End of Step: '<S1>/Step' */
-  if (rtmIsMajorTimeStep(prueba_M)) {
     /* Sum: '<Root>/Sum2' incorporates:
      *  Constant: '<Root>/p11'
      *  Constant: '<Root>/p22'
      *  Constant: '<Root>/step'
+     *  Gain: '<Root>/Gain'
      *  Product: '<Root>/p1'
      *  Product: '<Root>/p2'
      */
-    prueba_B.Sum2 = prueba_P.p11_Value * rtb_Gain + prueba_P.p22_Value *
-      prueba_P.step_Value;
+    prueba_B.Sum2 = prueba_P.Gain_Gain * rtb_Impulse * prueba_P.p11_Value +
+      prueba_P.p22_Value * prueba_P.step_Value;
   }
 
-  /* Sum: '<Root>/Sum5' incorporates:
+  /* Clock: '<S1>/Clock' */
+  rtb_Clock = prueba_M->Timing.t[0];
+
+  /* Step: '<S1>/Step' */
+  if (prueba_M->Timing.t[0] < prueba_P.Ramp_start) {
+    tmp = prueba_P.Step_Y0;
+  } else {
+    tmp = prueba_P.Ramp_slope;
+  }
+
+  /* End of Step: '<S1>/Step' */
+
+  /* Sum: '<Root>/Sum4' incorporates:
    *  Constant: '<Root>/p33'
    *  Constant: '<Root>/p44'
    *  Constant: '<S1>/Constant'
    *  Constant: '<S1>/Constant1'
-   *  Gain: '<Root>/Gain1'
-   *  Gain: '<Root>/Gain2'
-   *  Gain: '<Root>/Gain3'
    *  Integrator: '<Root>/Integrator'
    *  Product: '<Root>/p3'
    *  Product: '<Root>/p4'
    *  Product: '<S1>/Product'
-   *  Sum: '<Root>/Sum1'
    *  Sum: '<Root>/Sum3'
-   *  Sum: '<Root>/Sum4'
-   *  Sum: '<Root>/Sum6'
    *  Sum: '<S1>/Output'
    *  Sum: '<S1>/Sum'
-   *  TransferFcn: '<Root>/P'
-   *  TransferFcn: '<Root>/Pd'
-   *  TransferFcn: '<Root>/Pi'
    */
-  prueba_B.Sum5 = ((((rtb_Step - prueba_P.Ramp_start) * rtb_Clock +
-                     prueba_P.Ramp_X0) * prueba_P.p33_Value + prueba_P.p44_Value
-                    * prueba_X.Integrator_CSTATE) + prueba_B.Sum2) +
-    ((prueba_P.Pi_D * Sum * prueba_P.Gain2_Gain + prueba_P.Pd_D * Sum *
-      prueba_P.Gain3_Gain) + prueba_P.P_D * Sum * prueba_P.Gain1_Gain);
+  prueba_B.Sum4 = (((rtb_Clock - prueba_P.Ramp_start) * tmp + prueba_P.Ramp_X0) *
+                   prueba_P.p33_Value + prueba_P.p44_Value *
+                   prueba_X.Integrator_CSTATE) + prueba_B.Sum2;
+  if (rtmIsMajorTimeStep(prueba_M)) {
+  }
+
+  /* TransferFcn: '<Root>/Sensor' */
+  rtb_Clock = 0.0;
+  rtb_Clock += prueba_P.Sensor_D * prueba_B.planta;
+
+  /* TransferFcn: '<Root>/Controlador' incorporates:
+   *  Sum: '<Root>/Sum'
+   */
+  prueba_B.Controlador = 0.0;
+  prueba_B.Controlador += (prueba_B.Consig - rtb_Clock) * prueba_P.Controlador_D;
+
+  /* TransferFcn: '<Root>/actuador' */
+  rtb_Clock = 0.0;
+  rtb_Clock += prueba_P.actuador_D * prueba_B.Controlador;
+
+  /* Sum: '<Root>/Sum5' */
+  prueba_B.Sum5 = rtb_Clock + prueba_B.Sum4;
 
   /* Clock: '<S2>/Clock' */
   rtb_Clock = prueba_M->Timing.t[0];
 
   /* Step: '<S2>/Step' */
   if (prueba_M->Timing.t[0] < prueba_P.parabola_start) {
-    rtb_Step = prueba_P.Step_Y0_l;
+    tmp = prueba_P.Step_Y0_l;
   } else {
-    rtb_Step = prueba_P.parabola_slope;
+    tmp = prueba_P.parabola_slope;
   }
 
   /* End of Step: '<S2>/Step' */
@@ -322,7 +319,7 @@ void prueba_output(void)
    *  Product: '<S2>/Product'
    *  Sum: '<S2>/Sum'
    */
-  prueba_B.Output = (rtb_Clock - prueba_P.parabola_start) * rtb_Step +
+  prueba_B.Output = (rtb_Clock - prueba_P.parabola_start) * tmp +
     prueba_P.parabola_X0;
 
   /* Clock: '<Root>/Clock' */
@@ -377,15 +374,10 @@ void prueba_derivatives(void)
   XDot_prueba_T *_rtXdot;
   _rtXdot = ((XDot_prueba_T *) prueba_M->ModelData.derivs);
 
-  /* Derivatives for TransferFcn: '<Root>/Transfer Fcn' */
-  _rtXdot->TransferFcn_CSTATE[0] = 0.0;
-  _rtXdot->TransferFcn_CSTATE[1] = 0.0;
-  _rtXdot->TransferFcn_CSTATE[0U] += prueba_P.TransferFcn_A[0] *
-    prueba_X.TransferFcn_CSTATE[0];
-  _rtXdot->TransferFcn_CSTATE[0U] += prueba_P.TransferFcn_A[1] *
-    prueba_X.TransferFcn_CSTATE[1];
-  _rtXdot->TransferFcn_CSTATE[1] += prueba_X.TransferFcn_CSTATE[0];
-  _rtXdot->TransferFcn_CSTATE[0U] += prueba_B.Sum5;
+  /* Derivatives for TransferFcn: '<Root>/planta' */
+  _rtXdot->planta_CSTATE = 0.0;
+  _rtXdot->planta_CSTATE += prueba_P.planta_A * prueba_X.planta_CSTATE;
+  _rtXdot->planta_CSTATE += prueba_B.Sum5;
 
   /* Derivatives for Integrator: '<Root>/Integrator' */
   _rtXdot->Integrator_CSTATE = prueba_B.Output;
@@ -394,9 +386,8 @@ void prueba_derivatives(void)
 /* Model initialize function */
 void prueba_initialize(void)
 {
-  /* InitializeConditions for TransferFcn: '<Root>/Transfer Fcn' */
-  prueba_X.TransferFcn_CSTATE[0] = 0.0;
-  prueba_X.TransferFcn_CSTATE[1] = 0.0;
+  /* InitializeConditions for TransferFcn: '<Root>/planta' */
+  prueba_X.planta_CSTATE = 0.0;
 
   /* DSP System Toolbox Discrete Impulse Generator (sdspimpgen2) - '<Root>/  Impulse' */
   prueba_DW.Impulse_COUNT = ((int_T)50) + 1;
@@ -550,10 +541,10 @@ RT_MODEL_prueba_T *prueba(void)
   prueba_M->Timing.stepSize1 = 0.1;
 
   /* External mode info */
-  prueba_M->Sizes.checksums[0] = (296707143U);
-  prueba_M->Sizes.checksums[1] = (2965405624U);
-  prueba_M->Sizes.checksums[2] = (2777147921U);
-  prueba_M->Sizes.checksums[3] = (3497691000U);
+  prueba_M->Sizes.checksums[0] = (1124611382U);
+  prueba_M->Sizes.checksums[1] = (2075224728U);
+  prueba_M->Sizes.checksums[2] = (3630889891U);
+  prueba_M->Sizes.checksums[3] = (1597400790U);
 
   {
     static const sysRanDType rtAlwaysEnabled = SUBSYS_RAN_BC_ENABLE;
@@ -612,14 +603,14 @@ RT_MODEL_prueba_T *prueba(void)
   }
 
   /* Initialize Sizes */
-  prueba_M->Sizes.numContStates = (3); /* Number of continuous states */
+  prueba_M->Sizes.numContStates = (2); /* Number of continuous states */
   prueba_M->Sizes.numY = (0);          /* Number of model outputs */
   prueba_M->Sizes.numU = (0);          /* Number of model inputs */
   prueba_M->Sizes.sysDirFeedThru = (0);/* The model is not direct feedthrough */
   prueba_M->Sizes.numSampTimes = (2);  /* Number of sample times */
-  prueba_M->Sizes.numBlocks = (43);    /* Number of blocks */
-  prueba_M->Sizes.numBlockIO = (7);    /* Number of block outputs */
-  prueba_M->Sizes.numBlockPrms = (26); /* Sum of parameter "widths" */
+  prueba_M->Sizes.numBlocks = (38);    /* Number of blocks */
+  prueba_M->Sizes.numBlockIO = (9);    /* Number of block outputs */
+  prueba_M->Sizes.numBlockPrms = (21); /* Sum of parameter "widths" */
   return prueba_M;
 }
 

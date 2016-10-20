@@ -3,9 +3,9 @@
  *
  * Code generation for model "prueba".
  *
- * Model version              : 1.6
+ * Model version              : 1.8
  * Simulink Coder version : 8.6 (R2014a) 27-Dec-2013
- * C source code generated on : Tue Oct 18 08:33:21 2016
+ * C source code generated on : Tue Oct 18 14:01:36 2016
  *
  * Target selection: rtwin.tlc
  * Note: GRT includes extra infrastructure and instrumentation for prototyping
@@ -789,9 +789,11 @@
 
 /* Block signals (auto storage) */
 typedef struct {
-  real_T TransferFcn;                  /* '<Root>/Transfer Fcn' */
-  real_T Constant;                     /* '<Root>/Constant' */
+  real_T planta;                       /* '<Root>/planta' */
+  real_T Consig;                       /* '<Root>/Consig' */
   real_T Sum2;                         /* '<Root>/Sum2' */
+  real_T Sum4;                         /* '<Root>/Sum4' */
+  real_T Controlador;                  /* '<Root>/Controlador' */
   real_T Sum5;                         /* '<Root>/Sum5' */
   real_T Output;                       /* '<S2>/Output' */
   real_T Clock;                        /* '<Root>/Clock' */
@@ -808,19 +810,19 @@ typedef struct {
 
 /* Continuous states (auto storage) */
 typedef struct {
-  real_T TransferFcn_CSTATE[2];        /* '<Root>/Transfer Fcn' */
+  real_T planta_CSTATE;                /* '<Root>/planta' */
   real_T Integrator_CSTATE;            /* '<Root>/Integrator' */
 } X_prueba_T;
 
 /* State derivatives (auto storage) */
 typedef struct {
-  real_T TransferFcn_CSTATE[2];        /* '<Root>/Transfer Fcn' */
+  real_T planta_CSTATE;                /* '<Root>/planta' */
   real_T Integrator_CSTATE;            /* '<Root>/Integrator' */
 } XDot_prueba_T;
 
 /* State disabled  */
 typedef struct {
-  boolean_T TransferFcn_CSTATE[2];     /* '<Root>/Transfer Fcn' */
+  boolean_T planta_CSTATE;             /* '<Root>/planta' */
   boolean_T Integrator_CSTATE;         /* '<Root>/Integrator' */
 } XDis_prueba_T;
 
@@ -874,44 +876,20 @@ struct P_prueba_T_ {
                                         *   '<S2>/Constant'
                                         *   '<S2>/Step'
                                         */
-  real_T TransferFcn_A[2];             /* Computed Parameter: TransferFcn_A
-                                        * Referenced by: '<Root>/Transfer Fcn'
+  real_T planta_A;                     /* Computed Parameter: planta_A
+                                        * Referenced by: '<Root>/planta'
                                         */
-  real_T TransferFcn_C[2];             /* Computed Parameter: TransferFcn_C
-                                        * Referenced by: '<Root>/Transfer Fcn'
+  real_T planta_C;                     /* Computed Parameter: planta_C
+                                        * Referenced by: '<Root>/planta'
                                         */
-  real_T Constant_Value;               /* Expression: 2
-                                        * Referenced by: '<Root>/Constant'
+  real_T Consig_Value;                 /* Expression: 6
+                                        * Referenced by: '<Root>/Consig'
+                                        */
+  real_T p11_Value;                    /* Expression: 1
+                                        * Referenced by: '<Root>/p11'
                                         */
   real_T Gain_Gain;                    /* Expression: 20
                                         * Referenced by: '<Root>/Gain'
-                                        */
-  real_T P_D;                          /* Computed Parameter: P_D
-                                        * Referenced by: '<Root>/P'
-                                        */
-  real_T Gain1_Gain;                   /* Expression: 0
-                                        * Referenced by: '<Root>/Gain1'
-                                        */
-  real_T Pi_D;                         /* Computed Parameter: Pi_D
-                                        * Referenced by: '<Root>/Pi'
-                                        */
-  real_T Gain2_Gain;                   /* Expression: 1
-                                        * Referenced by: '<Root>/Gain2'
-                                        */
-  real_T Pd_D;                         /* Computed Parameter: Pd_D
-                                        * Referenced by: '<Root>/Pd'
-                                        */
-  real_T Gain3_Gain;                   /* Expression: 0
-                                        * Referenced by: '<Root>/Gain3'
-                                        */
-  real_T Integrator_IC;                /* Expression: 0
-                                        * Referenced by: '<Root>/Integrator'
-                                        */
-  real_T Step_Y0;                      /* Expression: 0
-                                        * Referenced by: '<S1>/Step'
-                                        */
-  real_T p11_Value;                    /* Expression: 0
-                                        * Referenced by: '<Root>/p11'
                                         */
   real_T p22_Value;                    /* Expression: 0
                                         * Referenced by: '<Root>/p22'
@@ -922,8 +900,23 @@ struct P_prueba_T_ {
   real_T p44_Value;                    /* Expression: 0
                                         * Referenced by: '<Root>/p44'
                                         */
-  real_T p33_Value;                    /* Expression: 0
+  real_T Integrator_IC;                /* Expression: 0
+                                        * Referenced by: '<Root>/Integrator'
+                                        */
+  real_T p33_Value;                    /* Expression: 1
                                         * Referenced by: '<Root>/p33'
+                                        */
+  real_T Step_Y0;                      /* Expression: 0
+                                        * Referenced by: '<S1>/Step'
+                                        */
+  real_T Sensor_D;                     /* Computed Parameter: Sensor_D
+                                        * Referenced by: '<Root>/Sensor'
+                                        */
+  real_T Controlador_D;                /* Computed Parameter: Controlador_D
+                                        * Referenced by: '<Root>/Controlador'
+                                        */
+  real_T actuador_D;                   /* Computed Parameter: actuador_D
+                                        * Referenced by: '<Root>/actuador'
                                         */
   real_T Step_Y0_l;                    /* Expression: 0
                                         * Referenced by: '<S2>/Step'
@@ -961,9 +954,9 @@ struct tag_RTM_prueba_T {
     boolean_T zCCacheNeedsReset;
     boolean_T derivCacheNeedsReset;
     boolean_T blkStateChange;
-    real_T OdeDeltaY[3];
-    real_T odeF[13][3];
-    real_T odeX0[3];
+    real_T OdeDeltaY[2];
+    real_T odeF[13][2];
+    real_T odeX0[2];
     ODE8_IntgData intgData;
     void *dwork;
   } ModelData;

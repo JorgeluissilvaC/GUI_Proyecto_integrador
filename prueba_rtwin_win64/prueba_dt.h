@@ -3,9 +3,9 @@
  *
  * Code generation for model "prueba".
  *
- * Model version              : 1.6
+ * Model version              : 1.8
  * Simulink Coder version : 8.6 (R2014a) 27-Dec-2013
- * C source code generated on : Tue Oct 18 08:33:21 2016
+ * C source code generated on : Tue Oct 18 14:01:36 2016
  *
  * Target selection: rtwin.tlc
  * Note: GRT includes extra infrastructure and instrumentation for prototyping
@@ -54,7 +54,7 @@ static const char_T * rtDataTypeNames[] = {
 
 /* data type transitions for block I/O structure */
 static DataTypeTransition rtBTransitions[] = {
-  { (char_T *)(&prueba_B.TransferFcn), 0, 0, 6 }
+  { (char_T *)(&prueba_B.planta), 0, 0, 8 }
   ,
 
   { (char_T *)(&prueba_DW.Scope_PWORK.LoggedData), 11, 0, 1 },
@@ -70,7 +70,7 @@ static DataTypeTransitionTable rtBTransTable = {
 
 /* data type transitions for Parameters structure */
 static DataTypeTransition rtPTransitions[] = {
-  { (char_T *)(&prueba_P.Ramp_X0), 0, 0, 26 }
+  { (char_T *)(&prueba_P.Ramp_X0), 0, 0, 21 }
 };
 
 /* data type transition table for Parameters structure */

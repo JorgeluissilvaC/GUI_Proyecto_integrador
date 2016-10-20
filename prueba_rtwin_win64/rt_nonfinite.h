@@ -3,9 +3,9 @@
  *
  * Code generation for model "prueba".
  *
- * Model version              : 1.6
+ * Model version              : 1.8
  * Simulink Coder version : 8.6 (R2014a) 27-Dec-2013
- * C source code generated on : Tue Oct 18 08:33:21 2016
+ * C source code generated on : Tue Oct 18 14:01:36 2016
  *
  * Target selection: rtwin.tlc
  * Note: GRT includes extra infrastructure and instrumentation for prototyping

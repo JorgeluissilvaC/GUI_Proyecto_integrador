@@ -1414,7 +1414,7 @@ switch tp
       sig=zz;
     case 2
       imp(1:m)=0;
-      imp(400:405)=20;
+      imp(200:205)=20;
       sig=imp;
     case 4
        sig=t;
@@ -1453,13 +1453,13 @@ switch tp1
     case 1
         sig(1:m)=0;
     case 2
-      imp(1:m)=0;
+      imp(1:1)=0;
       imp(200:205)=20;
       sig=imp;
       disp('hola')
     case 3
       zz(1:199)=0;
-      zz(200:m)=1;
+      zz(200:1000)=1;
       sig=zz;
     case 4
        sig=t;
