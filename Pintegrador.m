@@ -22,7 +22,7 @@ function varargout = Pintegrador(varargin)
 
 % Edit the above text to modify the response to help Pintegrador
 
-% Last Modified by GUIDE v2.5 20-Oct-2016 14:06:54
+% Last Modified by GUIDE v2.5 20-Oct-2016 15:07:59
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -818,7 +818,7 @@ function pushbutton3_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 global Gm Gm2 numH denH num den cont
 Plo = get(handles.popupmenu1,'value');
-time =str2double(get(handles.time2,'String'));
+time =str2double(get(handles.time,'String'));
 h =str2double(get(handles.h,'String'));
 Res = get(handles.radiobutton9, 'Value');   %Superponer
 
@@ -1094,18 +1094,18 @@ function radiobutton9_Callback(hObject, eventdata, handles)
 
 
 
-function time2_Callback(hObject, eventdata, handles)
-% hObject    handle to time2 (see GCBO)
+function time_Callback(hObject, eventdata, handles)
+% hObject    handle to time (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of time2 as text
-%        str2double(get(hObject,'String')) returns contents of time2 as a double
+% Hints: get(hObject,'String') returns contents of time as text
+%        str2double(get(hObject,'String')) returns contents of time as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function time2_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to time2 (see GCBO)
+function time_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to time (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -1402,12 +1402,13 @@ function pushbutton7_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 tp=get(handles.seg,'Value');
-time1=str2num(get(handles.time2,'String'));
+time1=str2num(get(handles.tiempo1,'String'));
 m=5000;
 t=linspace(0,time1,m);
 hold off
 switch tp
-    
+     case 1
+        sig(1:m)=0;
     case 3
       zz(1:199)=0;
       zz(200:m)=1;
@@ -1420,8 +1421,7 @@ switch tp
        sig=t;
     case 5
        sig=t.^2/2;
-    case 1
-        sig(1:m)=0;
+   
 end
  xi=[t' sig'];
  %plot(handles.axes16,t,sig)
@@ -1675,6 +1675,29 @@ function seg_CreateFcn(hObject, eventdata, handles)
 % handles    empty - handles not created until after all CreateFcns called
 
 % Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function tiempo1_Callback(hObject, eventdata, handles)
+% hObject    handle to tiempo1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of tiempo1 as text
+%        str2double(get(hObject,'String')) returns contents of tiempo1 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function tiempo1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to tiempo1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
