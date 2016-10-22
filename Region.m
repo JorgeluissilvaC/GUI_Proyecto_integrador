@@ -14,9 +14,9 @@ for i=2:1:lm-1        %Filas
             if k > 0  
                 if p > -1
                     if k > 20*p
-                    plot(se(1,j),se(i,1),'*k')
-                    se(i,j)=1;
-                    hold on 
+                        plot(se(1,j),se(i,1),'*k')
+                        se(i,j)=1;
+                        hold on 
                     end
                 end
             end

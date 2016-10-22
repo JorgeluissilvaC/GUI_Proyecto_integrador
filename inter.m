@@ -37,10 +37,10 @@ solve(ele1(2:end),k)
 %%
 clear se1
 q=[-3,-3];v=[1,5];ps=1;
-n=[q(2):ps:v(2) 0];ln=length(n);%Filas 
-m=[q(1):ps:v(1) 0];lm=length(m);%Columnas
+n=[0 q(2):ps:v(2)];ln=length(n);%Filas 
+m=[0 q(1):ps:v(1)];lm=length(m);%Columnas
 se1=zeros(lm,ln,size(R,1));
-se1(:,1,1)=fliplr(m);se1(1,:,1)=fliplr(n');
+se1(:,1,1)=m;se1(1,:,1)=n';
 %se1=se1(1:end-1,1:end-1,:);
 ji=0;
 %%
