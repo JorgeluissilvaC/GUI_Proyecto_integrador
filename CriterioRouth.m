@@ -1,9 +1,9 @@
 %%Mostrar las raíces del sistema
 clc
 clear all
-syms x e
+syms x e k p
 epsilon=e;
-Coeff=[1 5 3*x 1 2];
+Coeff=[1 x^2 (x+2) (0.5*x)];
 Roots=roots(Coeff);
 display('Las raíces del sistema son: ')
 disp(Roots);
@@ -58,7 +58,11 @@ for i=3:n,				%go from 3rd row to last
 	end
 end
 disp(Mrouth);
-[n m o]=size(Mrouth);
-for i=1:1:n
-    Mrouth(i,1)
-end 
+[f m o]=size(Mrouth);
+R=Mrouth;
+ele=' ';
+for i=1:length(R)
+  el=strcat(',(',char(R(i,1)),')>0');
+  ele=strcat(ele,el);
+end
+solve(ele(2:end),x)
